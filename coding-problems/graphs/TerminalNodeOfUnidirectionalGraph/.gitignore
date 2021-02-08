@@ -8,6 +8,8 @@ Program/**/
 !ProgramTests/*.csproj
 ProgramTests/**/
 
+!README.md
+
 **/TestResults
 
 !TerminalNodeOfUnidirectionalGraph.sln
