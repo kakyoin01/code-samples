@@ -1,0 +1,17 @@
+!Problem.txt
+
+!Program/*.cs
+!Program/*.csproj
+Program/**/
+
+!ProgramTests/*.cs
+!ProgramTests/*.csproj
+ProgramTests/**/
+
+!SolutionExplanations.txt
+
+**/TestResults
+
+!SubarraySumEqualsK.sln
+
+**/.vs
