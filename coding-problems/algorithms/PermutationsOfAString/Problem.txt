@@ -1,0 +1,23 @@
+Problem Statement
+-----------------
+
+Given a string, print out all permutations of the string.
+
+
+Implementation Details
+----------------------
+
+Implement the following method:
+
+HashSet<string> GetStringPermutations(string str)
+
+Parameters:
+  str - The string to derive permutations from
+
+Returns:
+  A collection of all permutations of str.
+
+
+Constraints:
+
+1. All characters in str are unique (for sanity)

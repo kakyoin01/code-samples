@@ -1,0 +1,56 @@
+Solution Explanations
+---------------------
+
+A permutation is a unique rearrangement of all elements in a collection. For instance, all permutations of the string "abc" are:
+
+"abc"
+"acb"
+"bac"
+"bca"
+"cab"
+"cba"
+
+Of particular note is that there are n! (n factorial) permutations for a string that has n characters in it. For "abc" there are 3! = 3 * 2 * 1 = 6 permutations.
+
+Building up from smaller cases "a" and "ab" to reach "abc":
+
+  Permutations of "a":             {"a"}
+  Permutations of "a" + b":        {"ab", "ba"}
+  Permutations of "a" + "b" + "c": {"cab", "acb", "abc", "cba", bca", "bac"}
+
+There is a pattern here:
+
+Permutations of "ab" are created by inserting "b" everywhere into {"a"}
+Permutations of "abc" are created by inserting "c" everywhere into {"ab", "ba"}
+
+The same thing happens going backwards:
+
+  Permutations of "c":             {"c"}
+  Permutations of "c" + "b":       {"bc", "cb"}
+  Permutations of "c" + "b" + "a": {"abc", "bac", "bca", "acb", "cab", "cba"}
+
+Permutations of "cb" are created by inserting "b" everywhere into {"c"}
+Permutations of "cba" are created by inserting "a" everywhere into {"bc", "cb"}
+
+
+Splitting up and operating on "rolling" data one unit at a time...this calls for recursion!
+
+The general plan:
+
+1. Start with a single character as the base case. ({"c"})
+2. Add the next character ("b") everywhere around the current results ({"bc", "cb"})
+3. Add the next character ("c") everywhere around the current results ({"abc", "bac", "bca", "acb", "cab", "cba"})
+
+The solution can be executed backwards or forwards, as final results can be converted and sorted any way desired.
+
+Recursion should occur after handling base cases of either empty string ("") or single character string (e.g. "c"). Once an atomic element is obtained (e.g. "c") via base case return, the previous call with the last known character (e.g. "b") can operate on the returned results and return new updated "ongoing" permutations.
+
+
+General solution flow (backwards progression depicted):
+
+GetStringPermutations("abc") - peel off "a"
+-> GetStringPermutations("bc") - "peel off "b"
+--> GetStringPermutations("c") - "peel off "c"
+--> "c": Get back {"c"} (secondary base case)
+-> "b": Insert "b" everywhere in "c"--get back {"bc", "cb"}
+"a": Insert "a" everywhere in "bc" and "cb"--get back {"abc", "bac", "bca", "acb", "cab", "cba"}

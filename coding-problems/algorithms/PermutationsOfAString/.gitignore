@@ -1,0 +1,13 @@
+!Problem.txt
+
+!Program/*.cs
+!Program/*.csproj
+Program/**/
+
+!README.md
+
+!SolutionExplanations.txt
+
+!PermutationsOfAString.sln
+
+**/.vs
