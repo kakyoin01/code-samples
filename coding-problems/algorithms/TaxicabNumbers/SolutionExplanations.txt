@@ -1,0 +1,99 @@
+Solution Explanations
+---------------------
+
+Initial analysis of the problem results in plenty of attention given to the provided formula:
+
+a^3 + b^3 = c^3 + d^3
+
+Seeing four variables makes it clear that something must be done involving combinations of the four of them.
+
+
+1. Brute Force
+
+The simple way to test combinations is to go through each possible combination given all involved variables.
+
+The brute force method involves using multiple loops to test each possible combination for a...n, b...n, c...n and d...n. This should not be attempted with this problem at any moderate scale. The runtime complexity is too high--O(N^4) at worst, and O(N^3) at best with some optimization. There is a lot of unnecessary checking done with this method.
+
+
+2. Hash Table with unique cubed pair sums
+
+The brute force strategy raises an important observation: looping over a range of that many variables is a lot of work. How much can be cut out? What do a, b, c, and d represent? Looking at the problem statement, they must all be unique values. The equation reinforces this, and also makes it clear that the sum of cubes for a and b must equal the sum of cubes for c and d. Much repetition will be encountered trying to find different unique combinations--trying a few (regardless of success):
+
+a=1, b=2, c=3, d=4
+a=10, b=5, c=7, d=12
+
+But wait...if a can be 1, at some other point so can b. And c. And d. Flipping around the first example above:
+
+a=4, b=3, c=2, d=1
+
+Why generate the same number combinations for pairs (a, b) and (c, d) so much? The range for each number is the same. This should sound like a problem where a dictionary/hash table should be useful to track uniqueness. However, there is still one more issue to account for. Many comparisons such as a=1, b=2, c=2, d=1 need to be skipped. Only the unique comparisons matter. How to avoid generating non-unique scenarios?
+
+The answer is simpler than it might seem at first: skip looping over four variable ranges. Only loop over pairs, because we only care about pairs. Looping over only (a, b) pair ranges seems like the right choice. It needs to generate all possible unique pairs. The right choice for this is to loop a over (start...end) and b over (a...end). Thus, each possible number pair is only ever checked once.
+
+If in doubt, step through some examples that may present problems. For instance, any (a, b) pair where a == b is not desired:
+
+(1, 1)
+(2, 2)
+(3, 3)
+
+(1, 1) is encountered fairly early on in the sequence. Why isn't it a problem? Because (1, 1) will never be encountered again in the (a, b) double loop sequence. Once the a variable hits the max threshold, its value rolls over to 2 for the next loop iteration, and it becomes impossible to encounter (1, 1) again. The closest the loop will get to (1, 1) again is (2, 2). Same with (2, 2) and (3, 3), and so on. The only way to find a pair that matches any non-unique pair (x, x) such that (x^3 + x^3) is to encounter the same pair again. That way, (x^3 + x^3) == (x^3 + x^3). But this will not be found again, and thus this will not generate a match.
+
+Same with "mirrored" pairs (x, y) and (y, x). For instance:
+
+(1, 2)
+(2, 1)
+
+The pair (2, 1) isn't possible to encounter since b is being looped over the range (a...end). Same with more complicated pair mirrors such as (4, 58) and (58, 4) since when a=58, b can be no less than 58.
+
+Now that only unique pairs of numbers are confirmed, the solution path is clear:
+
+1. Create dictionary with key=cubed pair sum and value=list of (a, b) pairs that satisfy that key.
+1. Calculate the cubed pair sum a^3 + b^3 as a dictionary key for every (a, b) pair.
+2. See if that key already exists in the dictionary--if so, there is a match for each value stored with that key.
+3. Add the cubed pair sum to the dictionary:
+    i. If key already exists, add (a, b) to the end of the list under that key.
+    OR
+    ii. If key doesn't exist, add a new key-value pair with the cubed pair sum as the key and (a, b) as the first entry in the new list under that key.
+
+
+Quick Reference
+---------------
+The first 35 taxicab numbers and associated (a, b) & (c, d) pairs within the domain of this problem are:
+
+1  - TCNumber:   1729, Pair1: [1,  12], Pair2: [9,  10]
+2  - TCNumber:   4104, Pair1: [2,  16], Pair2: [9,  15]
+3  - TCNumber:  13832, Pair1: [2,  24], Pair2: [18, 20]
+4  - TCNumber:  20683, Pair1: [10, 27], Pair2: [19, 24]
+5  - TCNumber:  32832, Pair1: [4,  32], Pair2: [18, 30]
+6  - TCNumber:  39312, Pair1: [2,  34], Pair2: [15, 33]
+7  - TCNumber:  40033, Pair1: [9,  34], Pair2: [16, 33]
+8  - TCNumber:  46683, Pair1: [3,  36], Pair2: [27, 30]
+9  - TCNumber:  64232, Pair1: [17, 39], Pair2: [26, 36]
+10 - TCNumber:  65728, Pair1: [12, 40], Pair2: [31, 33]
+11 - TCNumber: 110656, Pair1: [4,  48], Pair2: [36, 40]
+12 - TCNumber: 110808, Pair1: [6,  48], Pair2: [27, 45]
+13 - TCNumber: 134379, Pair1: [12, 51], Pair2: [38, 43]
+14 - TCNumber: 149389, Pair1: [8,  53], Pair2: [29, 50]
+15 - TCNumber: 165464, Pair1: [20, 54], Pair2: [38, 48]
+16 - TCNumber: 171288, Pair1: [17, 55], Pair2: [24, 54]
+17 - TCNumber: 195841, Pair1: [9,  58], Pair2: [22, 57]
+18 - TCNumber: 216027, Pair1: [3,  60], Pair2: [22, 59]
+19 - TCNumber: 216125, Pair1: [5,  60], Pair2: [45, 50]
+20 - TCNumber: 262656, Pair1: [8,  64], Pair2: [36, 60]
+21 - TCNumber: 314496, Pair1: [4,  68], Pair2: [30, 66]
+22 - TCNumber: 320264, Pair1: [18, 68], Pair2: [32, 66]
+23 - TCNumber: 327763, Pair1: [30, 67], Pair2: [51, 58]
+24 - TCNumber: 373464, Pair1: [6,  72], Pair2: [54, 60]
+25 - TCNumber: 402597, Pair1: [42, 69], Pair2: [56, 61]
+26 - TCNumber: 439101, Pair1: [5,  76], Pair2: [48, 69]
+27 - TCNumber: 443889, Pair1: [17, 76], Pair2: [38, 73]
+28 - TCNumber: 513000, Pair1: [10, 80], Pair2: [45, 75]
+29 - TCNumber: 513856, Pair1: [34, 78], Pair2: [52, 72]
+30 - TCNumber: 515375, Pair1: [15, 80], Pair2: [54, 71]
+31 - TCNumber: 525824, Pair1: [24, 80], Pair2: [62, 66]
+32 - TCNumber: 558441, Pair1: [30, 81], Pair2: [57, 72]
+33 - TCNumber: 593047, Pair1: [7,  84], Pair2: [63, 70]
+34 - TCNumber: 684019, Pair1: [51, 82], Pair2: [64, 75]
+35 - TCNumber: 704977, Pair1: [2,  89], Pair2: [41, 86]
+
+Cross-reference with official list here: https://oeis.org/A001235/list
