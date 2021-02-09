@@ -47,23 +47,25 @@ Implementation Details
 
 Implement the following method:
 
-<code>List<TCNumInfo> FindNTaxicabNumbersInfo(int n)</code>
+```cs
+List<TCNumInfo> FindNTaxicabNumbersInfo(int n)
+```
 
 Parameters:
-  <code>n</code> - Number of taxicab numbers to gather information about.
+* <code>n</code> - Number of taxicab numbers to gather information about.
 
 Returns:
-  A list of information related to first n taxicab numbers found ([a, b, c, d] and the number itself).
+* A list of information related to first n taxicab numbers found ([a, b, c, d] and the number itself).
 
 Where <code>TCNumInfo</code> is the following struct:
-<pre>
-  struct TCNumInfo
+```cs
+  readonly struct TCNumInfo
   {
       int[] Pair1 { get; }
       int[] Pair2 { get; }
       BigInteger TCNumber { get; }
   }
-</pre>
+```
 * <code>Pair1</code> - (a, b) pair that satisfies <code>a^3 + b^3 = c^3 + d^3</code> in combination with Pair2
 * <code>Pair2</code> - (c, d) pair that satisfies <code>a^3 + b^3 = c^3 + d^3</code> in combination with Pair1
 * <code>TCNumber</code> - Result from calculation of either <code>a^3 + b^3</code> or <code>c^3 + d^3</code>
