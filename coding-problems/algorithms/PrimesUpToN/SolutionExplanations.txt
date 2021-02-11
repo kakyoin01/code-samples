@@ -1,0 +1,98 @@
+Solution Explanations
+---------------------
+
+1. Brute Force
+
+Common math knowledge states that a prime number is defined as a number that is only cleanly divisible by itself and the number 1. By definition (see below explanation), the numbers 0 and 1 are not prime numbers, so the starting point is 2, which is itself a prime number. The next one is 3, then 5, and so on.
+
+The simple way to test combinations is to go through each possible number a in range 2...n and test to see if all numbers less than it cannot divide it evenly. For instance, if n=10:
+
+  Check if 2 is not cleanly divisible by (1) --------------------------- true
+  Check if 3 is not cleanly divisible by (1, 2) ------------------------ true
+  Check if 4 is not cleanly divisible by (1, 2, 3) --------------------- false (2)
+  Check if 5 is not cleanly divisible by (1, 2, 3, 4) ------------------ true
+  Check if 6 is not cleanly divisible by (1, 2, 3, 4, 5) --------------- false (2, 3)
+  Check if 7 is not cleanly divisible by (1, 2, 3, 4, 5, 6) ------------ true
+  Check if 8 is not cleanly divisible by (1, 2, 3, 4, 5, 6, 7)---------- false (2, 4)
+  Check if 9 is not cleanly divisible by (1, 2, 3, 4, 5, 6, 7, 8) ------ false (3)
+  Check if 10 is not cleanly divisible by (1, 2, 3, 4, 5, 6, 7, 8, 9) -- false (2, 5)
+
+Answers are 2, 3, 5, 7.
+
+This was only with n=10. What about far larger values such as 100, 1000, 10000 or even 1000000 or more?
+
+Brute force should not be attempted with this problem at any moderate scale. The runtime complexity is quite high--O(N^2) at best. But the real issue is the vast quantity of wasted computations, especially with large values of n.
+
+
+2. The Sieve of Eratosthenes
+
+The Sieve of Eratosthenes is a relatively famous, simple and (mostly) practical algorithm to solve this issue. It is attributed to Eratosthenes of Cyrene, a Greek mathematician and geographer in the third century BC (Before Christ). The fact that many of his accomplishments, such as this prime number sieve algorithm and impressively accurate calculation of the circumference of Earth, have aged well into 2020 AD (After Death) and beyond, is remarkable.
+
+The way the sieve algorithm works is by initially creating a "sieve": a set of data representing a yes/no status for all numbers from 0...n (indices 0...n+1). Smaller data types such as booleans or bits (if possible) are optimal for this purpose. The flag for each number except for 0 and 1 (which aren't prime numbers by definition, see below explanation) is assigned a "yes" status to indicate it may be a prime number. Using n=10 as an example again, the sieve will have 11 elements and initialize as shown below (boolean array with associated indices shown):
+
+[false, false, true, true, true, true, true, true, true, true, true]
+   0      1      2     3     4     5     6     7     8     9    10
+
+The algorithm then proceeds to methodically eliminate all composite (non-prime) numbers using iteration over multiples. Starting with 2, all multiples of 2 in the sieve are eliminated by setting their flag to "no":
+
+[false, false, true, true, false, true, false, true, false, true, false]
+   0      1      2     3     4      5     6      7     8      9    10
+                             -            -            -           --
+
+Underlined elements were changed. Note that 2 itself was not changed, because the algorithm tracks changes in a forward manner--it does not go back and check if 2 is NOT prime. Only multiples of 2 are eliminated because, as multiples of 2, they are by definition divisible by 2 and are thus not prime.
+
+The algorithm then finds the next value after 2 that is still marked as "yes" and performs the same elimination operation with multiples of that number. In this case, it's 3:
+
+[false, false, true, true, false, true, false, true, false, false, false]
+   0      1      2     3     4      5     6      7     8      9     10
+                                          -                   -
+
+Underlined elements were changed. Note that 6 was already false before this iteration.
+
+The next value that is true after 3 is 5, so if we were to iterate again, all multiples of 5 are eliminated next:
+
+[false, false, true, true, false, true, false, true, false, false, false]
+   0      1      2     3     4      5     6      7     8      9     10
+                                                                    --
+
+However, 10 was already false before this iteration. Looking at the current result makes it clear that the correct answers have all been found already (2, 3, 5, 7), even before eliminating multiples of 5.
+
+Eliminating multiples is a fast method of iteration, but how does the algorithm know when enough is enough? Running through the entire 2...n sequence is quite inefficient. The answer is to once again turn to mathematics: the largest possible factor of a number is its square root (see below for math explanation and example). Only potential numbers <= sqrt(n) need to be considered. For this example, that means only checking for multiples of x such that x <= sqrt(10). Only the numbers 2 and 3 qualify, so only multiples of 2 and 3 (but not 2 and 3 themselves) need to be eliminated before the algorithm exits. This more than halves the number of iterations needed.
+
+The only remaining task is to print out all indices i in the sieve such that sieve[i] == "on" (true for boolean). Since the sieve contains an entry representing every number from 0...n (only 2...n really matter), each "on" index in the sieve corresponds directly to a prime number.
+
+
+Time and Space Complexity
+-------------------------
+The sieve algorithm is not easy to measure complexity-wise. Big O notation is not a practical measurement of its efficiency due to the algorithm's upper limits. Some variations of the sieve algorithm can (un)realistically be claimed to run in O(n) time, but space complexity is still an issue. However, one straightforward optimization not shown in the code solution exists: skipping elimination of multiples for even numbers greater than 2 (since eliminating multiples of 2 removes this need). That will be left as a (simple) exercise to the reader. :)
+
+There is one concerning complication with the Sieve of Eratosthenes algorithm--memory consumption when n is higher than practical standards. The sieve itself, even implemented minimally with the most atomic primitive data type per entry, takes up an increasingly enormous chunk of contiguous space in memory the higher n is. However, for educational/technical interview scopes with non-ludicrously high values of n, the sieve algorithm is very reliable and efficient (it helps that the algorithm's complexity is quite low). A modified "segmented sieve" algorithm such as the Pseudosquares Prime Sieve by Jonathan Sorenson can get around this memory issue to a great extent by iterating on data ranges rather than one gigantic range.
+
+
+Miscellaneous Explanations
+--------------------------
+
+"Why aren't 0 and 1 prime numbers?"
+===
+0 is not a positive integer and cannot be prime.
+1 is not considered a "prime" number, but instead considered a "unit": one of two numbers whose multiplicative inverse is 1 (the other is -1). This was debated in recent history but has become standardized to globally not be considered a prime number.
+
+
+"Why only check multiples for all numbers a such that a <= sqrt(n)?"
+===
+This is because the largest possible factor of a number is its square root (a * a = n, or a = sqrt(n)). If a is not equal to sqrt(n), the equation becomes a * b = n where a and b are unique numbers where at most one of a or b is < sqrt(n).
+
+An example, n = 36:
+
+a and b can be (2, 18), (3, 12), (4, 9) and (6, 6).
+Note that one of the two factors in each combination is less than 6 and the other greater than 6, except for 36's square root pair of (6, 6).
+
+9, 12 and 18 are greater than 6. If these were to be checked against n (skipping lower results):
+  If 36 was divisible by 9, it would be 9x4 (it is) or 9x5 (it isn't)
+  If 36 was divisible by 12, it would be 12x3 (it is) or 12x4 (it isn't)
+  If 36 was divisible by 18, it would be 18x2 (it is) or 18x3 (it isn't)
+
+However, if these combinations are flipped around:
+  4x9, 5x9, 3x12, 4x12, 2x18, 3x18
+   36,  45,   36,   48,   36,   54
+It becomes apparent that they have already been tested earlier in the sieve formula when testing for divisibility by 2, 3, 4 and 5.
