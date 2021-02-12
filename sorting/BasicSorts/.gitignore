@@ -1,0 +1,11 @@
+!Program/*.cs
+!Program/*.csproj
+Program/**/
+
+!README.md
+
+!Explanations.txt
+
+!BasicSorts.sln
+
+**/.vs

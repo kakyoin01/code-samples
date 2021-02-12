@@ -1,0 +1,185 @@
+Explanations
+============
+
+Sorts covered:
+Bubble Sort
+Bubble Sort (recursive)
+Selection Sort
+Insertion Sort
+
+All examples assume the following array:
+
+int[] arr = { 5, 2, 8, 6, 10, 1, 4, 7, 9, 3 };
+
+
+Bubble Sort
+-----------
+One of the simplest, cleanest but computationally most expensive sorting algorithms. The goal is to move through the array from front to back, moving the largest values to the back (right side) of the array one swap at a time. In doing so, the smaller values "bubble" up to the top (left side) of the array during the swapping process.
+
+Example:
+
+Starting: { 5, 2, 8, 6, 10, 1, 4, 7, 9, 3 }
+
+Traverse array from index i = 0...(arr.Length - 2).
+    Traverse array from index j = i...(arr.Length - 1 - i).
+    Compare each value arr[j] and arr[j + 1} and swap so bigger value is on right.
+    
+    i = 0, j = 0...(arr.Length - 1):
+        5 > 2? Yes, swap 5 and 2   -- { 2, 5, 8, 6, 10, 1, 4, 7, 9, 3 }
+        5 > 8? No, do not swap     -- { 2, 5, 8, 6, 10, 1, 4, 7, 9, 3 }
+        8 > 6? Yes, swap 8 and 6   -- { 2, 5, 6, 8, 10, 1, 4, 7, 9, 3 }
+        8 > 10? No, do not swap    -- { 2, 5, 6, 8, 10, 1, 4, 7, 9, 3 }
+        10 > 1? Yes, swap 10 and 1 -- { 2, 5, 6, 8, 1, 10, 4, 7, 9, 3 }
+        10 > 4? Yes, swap 10 and 4 -- { 2, 5, 6, 8, 1, 4, 10, 7, 9, 3 }
+        10 > 7? Yes, swap 10 and 7 -- { 2, 5, 6, 8, 1, 4, 7, 10, 9, 3 }
+        10 > 9? Yes, swap 10 and 9 -- { 2, 5, 6, 8, 1, 4, 7, 9, 10, 3 }
+        10 > 3? Yes, swap 10 and 3 -- { 2, 5, 6, 8, 1, 4, 7, 9, 3, 10 }
+        
+    i = 1, j = 1...(arr.Length - 2):
+        2 > 5? No, do not swap     -- { 2, 5, 6, 8, 1, 4, 7, 9, 3, 10 }
+        5 > 6? No, do not swap     -- { 2, 5, 6, 8, 1, 4, 7, 9, 3, 10 }
+        6 > 8? No, do not swap     -- { 2, 5, 6, 8, 1, 4, 7, 9, 3, 10 }
+        8 > 1? Yes, swap 8 and 1   -- { 2, 5, 6, 1, 8, 4, 7, 9, 3, 10 }
+        8 > 4? Yes, swap 8 and 4   -- { 2, 5, 6, 1, 4, 8, 7, 9, 3, 10 }
+        8 > 7? Yes, swap 8 and 7   -- { 2, 5, 6, 1, 4, 7, 8, 9, 3, 10 }
+        8 > 9? No, do not swap     -- { 2, 5, 6, 1, 4, 7, 8, 9, 3, 10 }
+        9 > 3? Yes, swap 9 and 3   -- { 2, 5, 6, 1, 4, 7, 8, 3, 9, 10 }
+     .
+     .
+     .
+     and so on until the final result: { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
+     
+The result of each top iteration is the largest unsorted value moving to the right side of the array, and smaller values "bubbling up" closer to the left side of the array. The comparison range shrinks by one each iteration as sorted values are locked in on the right side of the array.
+
+Time complexity: The algorithm always iterates fully over (N/2) array values on average for each element N in the array, which when stripped of coefficients is simplified to a runtime of O(N^2). This is because the worst case scenario (reverse-sorted array) involves a swap with each comparison. However, it has a best case O(N) where the array is already sorted, in which no swap operations are performed.
+
+Space complexity: Doesn't use any space beyond a temporary variable for swapping, thus is very space-efficient. This is constant space O(1).
+
+
+Bubble Sort (recursive)
+-----------------------
+The recursive implementation of Bubble Sort has the same behavior and time & space complexity as the non-recursive implementation, and was included in the implementation file for recursion demonstration purposes only. An algorithm that operates the same on a repeatedly shrinking data range is a perfect use case for recursion (especially if the operation in question is space-efficient).
+
+
+Selection Sort
+--------------
+A more efficient but equally iterative sorting algorithm relative to Bubble Sort. Selection Sort works by iterating through an array from left to right, and at each point searching the rest of the array for the location of the smallest value it can find. By the end of the array it will have found the location of the smallest value, which is then used to swap with the value at the current point in the array before the next iteration begins. This is effectively a "selection" process for moving values one at a time, rather than blindly moving values by relative comparison like Bubble Sort does, and thus results in far fewer swapping operations.
+
+Example:
+
+Starting: { 5, 2, 8, 6, 10, 1, 4, 7, 9, 3 }
+
+Traverse array from index i = 0...(arr.Length - 1).
+    Traverse array from index j = i...arr.Length.
+    Find index of lowest value up until end of array.
+    
+    i = 0, j = 0...(arr.Length - 1):
+        Initialize index of min value found so far (j) to 0.
+        j = 0: 5 > 5? No, continue
+        j = 1: 5 > 2? Yes, new min value index is 1
+        j = 2: 2 > 8? No, continue
+        j = 3: 2 > 6? No, continue
+        j = 4: 2 > 10? No, continue
+        j = 5: 2 > 1? Yes, new min value index is 5
+        j = 6: 1 > 4? No, continue
+        j = 7: 1 > 7? No, continue
+        j = 8: 1 > 9? No, continue
+        j = 9: 1 > 3? No, continue
+    Swap values at indices 0 and 5 -- { 1, 2, 8, 6, 10, 5, 4, 7, 9, 3 }
+        
+    i = 1, j = 1...(arr.Length - 1):
+        Initialize index of min value found so far (j) to 1.
+        j = 1: 2 > 2? No, continue
+        j = 2: 2 > 8? No, continue
+        j = 3: 2 > 6? No, continue
+        j = 4: 2 > 10? No, continue
+        j = 5: 2 > 5? No, continue
+        j = 6: 2 > 4? No, continue
+        j = 7: 2 > 7? No, continue
+        j = 8: 2 > 9? No, continue
+        j = 9: 2 > 3? No, continue
+    Swap values at indices 1 and 1 (no array change) -- { 1, 2, 8, 6, 10, 5, 4, 7, 9, 3 }
+        
+    i = 2, j = 2...(arr.Length - 1):
+        Initialize index of min value found so far (j) to 2.
+        j = 2: 8 > 8? No, continue
+        j = 3: 8 > 6? Yes, new min value index is 3
+        j = 4: 6 > 10? No, continue
+        j = 5: 6 > 5? Yes, new min value index is 5
+        j = 6: 5 > 4? Yes, new min value index is 6
+        j = 7: 4 > 7? No, continue
+        j = 8: 4 > 9? No, continue
+        j = 9: 4 > 3? Yes, new min value index is 9
+    Swap values at indices 2 and 9 -- { 1, 2, 3, 6, 10, 5, 4, 7, 9, 8 }
+    .
+    .
+    .
+    and so on until the final result: { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
+
+This algorithm is effectively described as "reverse Bubble Sort with one swap per iteration." Instead of repeatedly pushing larger values to the end of the array, it repeatedly finds the location of the smallest value in the remaining unsorted range and swaps that value to its correct sorted position at the beginning of the array.
+
+Time complexity: The algorithm always iterates fully over (N/2) array values on average for each element N in the array, which when stripped of coefficients is simplified to a runtime of O(N^2). There is no worst case input scenario for this algorithm because per iteration, it doesn't stop prematurely and only one swap is performed. This also means that it has no best case input scenario either.
+
+Space complexity: Doesn't use any space beyond a temporary variable for swapping, thus is very space-efficient. This is constant space O(1).
+
+In summary...unless input is nearly or fully pre-sorted, use this over Bubble Sort if given the choice between the two!
+
+
+Insertion Sort
+--------------
+This sorting algorithm can be best described as how one would sort cards in one's hand in a card game after being dealt a number of cards. If playing a game of Poker (five card draw) and you are dealt a hand of 10, 3, K, 6 and 7--ignoring suits for this example--you would want to reorder the cards in your hand. Most would pick and re-insert one card at a time in the displayed hand such that the hand has a natural order. Many would reorder that hand left-to-right such that the cards are displayed in the order 3, 6, 7, 10, K.
+
+This summarizes Insertion Sort perfectly: iterate through the array from left to right, and on each iteration finding the right place to "insert" the current value at earlier in the array. For each iteration, bigger values are shifted forward by one index in the array until a smaller value is encountered next. The index after this smaller value is the correct place to insert the current value.
+
+Example:
+
+Starting: { 5, 2, 8, 6, 10, 1, 4, 7, 9, 3 }
+
+Traverse array from index i = 1...(arr.Length - 1).
+    Capture value at i.
+    Traverse array backwards from index j = i...0, comparing values at arr[j] and arr[j - 1].
+    If arr[j - 1] > arr[j], move value at (j - 1) to index (j).
+    Continue doing this until lower value encountered at arr[j - 1] or until entire front of array exhausted.
+    Insert value into array at index j.
+    
+    i = 1, j = 1...0:
+    Store value at index 1 (2).
+        j = 1: 5 > 2? Yes, move 5 into index 1 -- { 5, 5, 8, 6, 10, 1, 4, 7, 9, 3 }
+        j = 0: No valid comparison to be made, array exhausted.
+    Insert value 2 at index 0 -- { 1, 5, 8, 6, 10, 1, 4, 7, 9, 3 }
+    
+    i = 2, j = 2...0:
+    Store value at index 2 (8).
+        j = 2: 5 > 8? No. Smaller value found, end here.
+    Insert value 8 at index 2 (no change to array) -- { 1, 5, 8, 6, 10, 1, 4, 7, 9, 3 }
+    
+    i = 3, j = 3...0:
+    Store value at index 3 (6).
+        j = 3: 8 > 6? Yes, move 8 into index 3 -- { 1, 5, 8, 8, 10, 1, 4, 7, 9, 3 }
+        j = 2: 5 > 6? No. Smaller value found, end here.
+    Insert value 6 at index 2 -- { 1, 5, 6, 8, 10, 1, 4, 7, 9, 3 }
+    .
+    .
+    .
+    and so on until the final result: { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }
+
+Each iteration, the algorithm essentially moves left towards the beginning of the array and slides bigger values to the right to make room for the current value. It places the value one index above the first smaller value encountered in this manner. This builds a sorted half of the array on the left. The number of comparisons performed is even less than that of Selection Sort, since the algorithm iterates backwards through previously sorted values but not necessarily across the entire range each iteration--it stops once a smaller value is found.
+
+Time complexity: The algorithm iterates over (N-1) array values at most for each element N in the array, which when stripped of coefficients is simplified to a runtime of O(N^2). This is because the worst case scenario (reverse-sorted array) involves a shift operation with each comparison. However, like Bubble Sort it has a best case scenario of O(N) with a pre-sorted array since only one copy (not swap) operation per iteration is performed at most.
+
+Space complexity: Doesn't use any space beyond a temporary variable for storing the given value to insert each iteration, thus is very space-efficient. This is constant space O(1).
+
+
+Which sorting algorithm is the best?
+------------------------------------
+Bubble Sort has a best case scenario, but is otherwise inferior to Selection Sort and Insertion Sort on average due to its inherentcomplexity. However, which of the remaining two is better? There are a few factors to consider:
+
+Selection Sort always fully traverses its search range (all remaining unsorted numbers) on each iteration. Insertion Sort is more efficient for smaller data sets since it doesn't always fully traverse the search range (all previously sorted numbers) on each iteration.
+
+Insertion Sort is also naturally stable. Selection Sort, which can have a modified implementation to make it stable, is not naturally stable. A sorting algorithm is considered "stable" if identical data input values maintain their relative order once the algorithm concludes. For instance, if an array of values {4, 10, 7, 2, 10, 1} is used as input, there are two values of 10. A stable sorting algorithm will keep them in that relative order in resulting output.
+    Selection Sort iterates over unsorted numbers and performs a dedicated swap each iteration without comparing previously sorted values, thus the relative order of identical values is not guaranteed. Depending on where each 10 is in the array relative to when smaller values are encountered, the relative order of the 10s may be swapped in the process.
+    Insertion Sort iterates over previously sorted numbers and thus maintains relative order of identical values. If the first 10 has been sorted, a comparison of the second 10 to the first 10 is eventually made--and since 10 > 10 is false, the second 10 is placed to the right of the first 10.
+
+Thus, Insertion Sort combines the best of both Bubble and Selection Sort--it has a best case scenario like the former, an even more efficient algorithm on average than the latter, and is a stable sorting algorithm. Insertion Sort is the winner!
+
+However, overall it is worth mentioning that all three of these sorting algorithms sort an array in-place: no temporary storage structures for values beyond one single variable for swapping/storing are needed. All of them have O(1) space complexity, which is more efficient space-wise than advanced sorting algorithms such as Merge Sort, Quick Sort and Heap Sort. For smaller data sets, Bubble Sort, Selection Sort and Insertion Sort are ideal. However, despite having next to no memory footprint, the advanced sorting algorithms are far faster for larger data sets--no worse than O(NlogN) time complexity.
